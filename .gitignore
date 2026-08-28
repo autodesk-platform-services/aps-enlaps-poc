@@ -251,3 +251,7 @@ cython_debug/
 .idea/modules.xml
 .idea/vcs.xml
 .idea/inspectionProfiles/profiles_settings.xml
+aps-forma-issues/sample/.env
+aps-forma-issues/sample/secrets/ssa_private_key.pem
+aps-ssa/sample/.env
+aps-ssa/sample/secrets/ssa_private_key.pem
