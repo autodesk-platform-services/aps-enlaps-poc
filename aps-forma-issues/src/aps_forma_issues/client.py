@@ -6,6 +6,7 @@ from pathlib import Path
 
 import requests
 
+from . import attachments as _attachments
 from . import issues as _issues
 from . import items as _items
 from . import relationships as _relationships
@@ -170,6 +171,90 @@ class FormaIssuesClient:
         relationships = raw_attachment.get("relationships") or []
         if relationships:
             attachment_id = relationships[0].get("id")
+
+        web_view_url = None
+        if lineage_urn:
+            web_view_url = _items.get_item_web_view_url(
+                self._config, self._auth, lineage_urn, session=self._session
+            )
+
+        return IssueResult(
+            issue_id=issue_id,
+            attachment_id=attachment_id,
+            raw_issue=raw_issue,
+            raw_attachment=raw_attachment,
+            web_view_url=web_view_url,
+        )
+
+    def attach_image_to_issue_via_endpoint(
+        self,
+        issue_id: str,
+        image_bytes: bytes,
+        filename: str,
+    ) -> dict:
+        """Alternative to `attach_image_to_issue`: attaches an image
+        using the Issues API's own attachments endpoint instead of
+        creating an item in `config.upload_folder_id`.
+
+        No Docs folder permission is required for this path, unlike
+        `attach_image_to_issue` — the tradeoff is that Autodesk places
+        the image in its own auto-created, unbrowsable folder rather
+        than one you chose. See `attachments.py`.
+
+        Args:
+            issue_id (str): ID of the issue to attach to.
+            image_bytes (bytes): Raw image bytes.
+            filename (str): Desired file name.
+
+        Returns:
+            dict: Parsed response, e.g. `{"attachments": [{"attachmentId":
+            ..., "lineageUrn": ..., ...}]}`.
+
+        Raises:
+            StorageUploadError: If uploading the image fails.
+            AttachmentError: If the attach request fails.
+        """
+        storage_urn = self.upload_image(image_bytes, filename=filename)
+        return _attachments.attach_image_to_issue(
+            self._config, self._auth, issue_id, storage_urn, filename, session=self._session
+        )
+
+    def create_issue_with_image_via_endpoint(
+        self,
+        issue: IssueInput,
+        image_bytes: bytes,
+        filename: str = "situation.jpg",
+    ) -> IssueResult:
+        """Alternative to `create_issue_with_image`, using
+        `attach_image_to_issue_via_endpoint` for the attach step. See
+        that method for the tradeoff versus the default.
+
+        Args:
+            issue (IssueInput): Fields for the new issue.
+            image_bytes (bytes): Raw image bytes.
+            filename (str, optional): Desired file name.
+
+        Returns:
+            IssueResult: The created issue, attachment, and a direct
+            link to the uploaded image.
+
+        Raises:
+            IssueCreationError: If creating the issue fails.
+            StorageUploadError: If uploading the image fails.
+            AttachmentError: If the attach request fails.
+        """
+        raw_issue = self.create_issue(issue)
+        issue_id = raw_issue["id"]
+
+        raw_attachment = self.attach_image_to_issue_via_endpoint(
+            issue_id, image_bytes, filename
+        )
+        attachment_id = None
+        lineage_urn = None
+        attachments = raw_attachment.get("attachments") or []
+        if attachments:
+            attachment_id = attachments[0].get("attachmentId")
+            lineage_urn = attachments[0].get("lineageUrn")
 
         web_view_url = None
         if lineage_urn:

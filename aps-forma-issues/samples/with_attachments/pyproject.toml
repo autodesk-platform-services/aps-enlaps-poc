@@ -1,0 +1,17 @@
+[project]
+name = "aps-forma-issues-attachments-sample"
+version = "0.1.0"
+description = "Manually verify aps-forma-issues's Issues-attachments-endpoint path against a real Forma/ACC project"
+requires-python = ">=3.11"
+dependencies = [
+    "aps-ssa",
+    "aps-forma-issues",
+    "python-dotenv>=1.0",
+]
+
+[tool.uv.sources]
+aps-ssa = { path = "../../../aps-ssa" }
+aps-forma-issues = { path = "../../" }
+
+[tool.uv]
+package = false

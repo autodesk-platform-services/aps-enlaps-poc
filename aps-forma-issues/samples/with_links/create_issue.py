@@ -1,4 +1,4 @@
-"""Manually verify aps-forma-issues library"""
+"""Manually verify aps-forma-issues library using references to images"""
 
 from __future__ import annotations
 
@@ -66,14 +66,10 @@ def main() -> int:
     client = FormaIssuesClient(forma_config, auth)
 
     issue = IssueInput(
-        title="[aps-forma-issues-sample] test issue",
-        description="Created by aps-forma-issues-sample for manual verification.",
+        title="[aps-forma-issues-sample-with-links] test issue",
+        description="Created by aps-forma-issues-sample-with-links for manual verification.",
         issue_subtype_id=issue_subtype_id,
         assigned_to=assigned_to,
-        # startDate wants a bare YYYY-MM-DD. The API's own 400 error
-        # shows an "example" like "1982-06-01T00:00:00.000Z", but that's
-        # misleading — sending that exact shape back still 400s; only a
-        # bare date (confirmed live) is accepted.
         start_date=datetime.date.today().isoformat(),
         root_cause_id=SafetyRootCause.HUMAN_ERROR
     )

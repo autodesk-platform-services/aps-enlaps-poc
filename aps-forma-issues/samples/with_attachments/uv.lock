@@ -5,7 +5,7 @@ requires-python = ">=3.11"
 [[package]]
 name = "aps-forma-issues"
 version = "0.1.0"
-source = { directory = "../" }
+source = { directory = "../../" }
 dependencies = [
     { name = "pyjwt" },
     { name = "requests" },
@@ -24,7 +24,7 @@ dev = [
 ]
 
 [[package]]
-name = "aps-forma-issues-sample"
+name = "aps-forma-issues-attachments-sample"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
@@ -35,15 +35,15 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
-    { name = "aps-forma-issues", directory = "../" },
-    { name = "aps-ssa", directory = "../../aps-ssa" },
+    { name = "aps-forma-issues", directory = "../../" },
+    { name = "aps-ssa", directory = "../../../aps-ssa" },
     { name = "python-dotenv", specifier = ">=1.0" },
 ]
 
 [[package]]
 name = "aps-ssa"
 version = "0.1.0"
-source = { directory = "../../aps-ssa" }
+source = { directory = "../../../aps-ssa" }
 dependencies = [
     { name = "pyjwt", extra = ["crypto"] },
     { name = "requests" },

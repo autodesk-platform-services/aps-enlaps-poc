@@ -16,7 +16,7 @@ but it can be used in other context, too. Check [aps-ssa-sample](./aps-ssa/sampl
 Library facilitating use of APS APIs to record into APS Forma safety issues, 
 along with photo proof.
 
-Check [aps-forma-issue-sample](./aps-forma-issues/sample) on how to use the 
+Check [aps-forma-issue-sample](aps-forma-issues/samples) on how to use the 
 library, to get an Issue created providing title, description, date and 
 supporting image:
 

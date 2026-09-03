@@ -1,9 +1,16 @@
-# aps-forma-issues sample
+# aps-forma-issues sample with links
 
 This sample illustrates use of 'aps-forma-issues' library to create 
 "Safety" type issues, along with a real image, that will be stored 
 and accessible in Docs and then linked, so it renders as an attachment 
 on the related Issue.
+
+> **The main benefit:** the images are stored in Docs folder and can be easily accessed
+
+> **The main drawback:** the attached pictures doesn't render in issue reports, instead showing just a link
+> 
+
+
 
 This library has several API calls chained together, each of
 which could independently fail — so the sample checks them one at a

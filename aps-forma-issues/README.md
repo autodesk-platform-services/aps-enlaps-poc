@@ -92,5 +92,7 @@ from aps_forma_issues import IssueInput, SafetyRootCause
 IssueInput(..., root_cause_id=SafetyRootCause.HUMAN_ERROR)
 ```
 
-## Sample
-Check [aps-forma-issues sample](./sample/) for illustration on usage and integration. 
+## Samples
+Check [aps-forma-issues-with_attachments sample](./samples/with_attachments) for illustration on usage and integration, using the direct attachment of images to an issue approach.
+
+Check [aps-forma-issues-with_links sample](./samples/with_links) for illustration on usage and integration, using the linkig a Docs hosted image to an issue approach.

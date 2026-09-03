@@ -241,8 +241,8 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 
-!/aps-forma-issues/sample/secrets/ssa_private_key.pem
-!/aps-forma-issues/sample/.env
+!/aps-forma-issues/samples/with_links/secrets/ssa_private_key.pem
+!/aps-forma-issues/samples/with_links/.env
 !/aps-ssa/sample/.env
 !/aps-ssa/sample/secrets/ssa_private_key.pem
 .idea/.gitignore
@@ -251,7 +251,7 @@ cython_debug/
 .idea/modules.xml
 .idea/vcs.xml
 .idea/inspectionProfiles/profiles_settings.xml
-aps-forma-issues/sample/.env
-aps-forma-issues/sample/secrets/ssa_private_key.pem
+aps-forma-issues/samples/with_links/.env
+aps-forma-issues/samples/with_links/secrets/ssa_private_key.pem
 aps-ssa/sample/.env
 aps-ssa/sample/secrets/ssa_private_key.pem

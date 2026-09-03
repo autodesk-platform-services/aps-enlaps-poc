@@ -10,8 +10,8 @@ dependencies = [
 ]
 
 [tool.uv.sources]
-aps-ssa = { path = "../../aps-ssa" }
-aps-forma-issues = { path = "../" }
+aps-ssa = { path = "../../../aps-ssa" }
+aps-forma-issues = { path = "../../" }
 
 [tool.uv]
 package = false
