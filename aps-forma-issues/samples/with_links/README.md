@@ -8,7 +8,7 @@ on the related Issue.
 > **The main benefit:** the images are stored in Docs folder and can be easily accessed
 
 > **The main drawback:** the attached pictures doesn't render in issue reports, instead showing just a link
-> 
+
 
 
 
