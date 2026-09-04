@@ -7,7 +7,9 @@ from .exceptions import (
     AttachmentError,
     FormaIssuesError,
     IssueCreationError,
+    IssueFetchError,
     ItemCreationError,
+    StorageDownloadError,
     StorageUploadError,
 )
 from .models import CustomAttribute, IssueInput, IssueResult
@@ -21,10 +23,12 @@ __all__ = [
     "FormaIssuesConfig",
     "FormaIssuesError",
     "IssueCreationError",
+    "IssueFetchError",
     "IssueInput",
     "IssueResult",
     "ItemCreationError",
     "SafetyRootCause",
+    "StorageDownloadError",
     "StorageUploadError",
     "TokenProvider",
 ]
