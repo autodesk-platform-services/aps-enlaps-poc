@@ -1,0 +1,17 @@
+[project]
+name = "aps-forma-issues-webapp-sample"
+version = "0.1.0"
+description = "3-legged OAuth Flask dashboard illustrating aps-forma-issues's list/get-issues calls"
+requires-python = ">=3.11"
+dependencies = [
+    "aps-forma-issues",
+    "flask>=3.0",
+    "python-dotenv>=1.0",
+    "requests>=2.31",
+]
+
+[tool.uv.sources]
+aps-forma-issues = { path = "../../" }
+
+[tool.uv]
+package = false

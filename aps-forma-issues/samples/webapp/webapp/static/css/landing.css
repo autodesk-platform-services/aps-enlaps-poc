@@ -1,0 +1,134 @@
+/* =====================================================
+   Landing page — shown when signed out.
+   ===================================================== */
+
+.landing-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-canvas);
+    background-image:
+        radial-gradient(circle at 1px 1px, rgba(0, 0, 0, 0.08) 1px, transparent 0);
+    background-size: 24px 24px;
+    background-position: -1px -1px;
+}
+
+.landing-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-card);
+    padding: 48px 56px;
+    max-width: 420px;
+    width: 90%;
+    text-align: center;
+}
+
+.landing-brand {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--accent-color);
+    margin-bottom: 28px;
+}
+
+.landing-title {
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 10px;
+}
+
+.landing-subtitle {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 28px;
+}
+
+.landing-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 26px;
+    background: var(--accent-color);
+    color: #fff;
+    border-radius: var(--radius);
+    font-weight: 600;
+    font-size: 14px;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: background 0.15s ease, box-shadow 0.15s ease;
+}
+
+.landing-cta:hover {
+    background: var(--accent-color-dark);
+    box-shadow: var(--shadow-card-hover);
+}
+
+.landing-footnote {
+    margin-top: 20px;
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+/* --- Login dialog: confirmation step before redirecting to Autodesk --- */
+
+.login-dialog-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+}
+
+.login-dialog-overlay.show {
+    display: flex;
+}
+
+.login-dialog {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+    width: 360px;
+    max-width: 90vw;
+    padding: 28px;
+    text-align: center;
+}
+
+.login-dialog h2 {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.login-dialog p {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+.login-dialog-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.login-dialog-actions .btn-secondary {
+    background: #fff;
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+
+.login-dialog-actions .btn-secondary:hover {
+    background: var(--item-hover);
+}

@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forma Issues Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/variables.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div class="navbar">
+        <div class="navbar-brand">
+            <svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+            </svg>
+            <span>Forma Issues Dashboard</span>
+        </div>
+        <div class="navbar-user">
+            <span class="user-name">{{ user_name or 'Signed in' }}</span>
+            <a href="{{ url_for('auth.logout') }}" class="auth-btn">Log Off</a>
+        </div>
+    </div>
+
+    <div class="dashboard">
+        <div class="dashboard-title">Issues</div>
+        <div class="dashboard-subtitle">{{ issues|length }} issue(s) on this project</div>
+
+        {% if error %}
+        <div class="dashboard-error">Could not load issues: {{ error }}</div>
+        {% endif %}
+
+        <div class="issues-table-wrapper">
+            {% if issues %}
+            <table class="issues-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Title</th>
+                        <th>Type</th>
+                        <th>Sub-Type</th>
+                        <th>Assigned To</th>
+                        <th>Due Date</th>
+                    </tr>
+                </thead>
+                <tbody id="issues-table-body">
+                    {% for issue in issues %}
+                    <tr data-index="{{ loop.index0 }}">
+                        <td class="issue-id-cell">#{{ issue.display_id }}</td>
+                        <td>{{ issue.title }}</td>
+                        <td>{{ issue.type }}</td>
+                        <td>{{ issue.subtype }}</td>
+                        <td>{{ issue.assigned_to }}</td>
+                        <td>{{ issue.due_date }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="empty-state">No issues found on this project.</div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="issue-modal-overlay" id="issue-modal-overlay">
+        <div class="issue-modal">
+            <div class="issue-modal-header">
+                <div>
+                    <div class="issue-modal-header-title" id="modal-title"></div>
+                    <div class="issue-modal-header-id" id="modal-display-id"></div>
+                </div>
+                <button type="button" class="issue-modal-close" id="modal-close">&times;</button>
+            </div>
+            <div class="issue-modal-body">
+                <div class="issue-field full-width">
+                    <div class="issue-field-label">Description</div>
+                    <div class="issue-field-value" id="modal-description"></div>
+                </div>
+                <div class="issue-field">
+                    <div class="issue-field-label">Type</div>
+                    <div class="issue-field-value" id="modal-type"></div>
+                </div>
+                <div class="issue-field">
+                    <div class="issue-field-label">Issue Owner</div>
+                    <div class="issue-field-value" id="modal-owner"></div>
+                </div>
+                <div class="issue-field">
+                    <div class="issue-field-label">Assigned to</div>
+                    <div class="issue-field-value" id="modal-assigned-to"></div>
+                </div>
+                <div class="issue-field">
+                    <div class="issue-field-label">Root Cause</div>
+                    <div class="issue-field-value" id="modal-root-cause"></div>
+                </div>
+                <div class="issue-field">
+                    <div class="issue-field-label">Location</div>
+                    <div class="issue-field-value" id="modal-location"></div>
+                </div>
+                <div class="issue-field">
+                    <div class="issue-field-label">Document</div>
+                    <div class="issue-field-value" id="modal-document"></div>
+                </div>
+                <div class="issue-field">
+                    <div class="issue-field-label">Due Date</div>
+                    <div class="issue-field-value" id="modal-due-date"></div>
+                </div>
+                <div class="issue-field full-width" id="modal-attachments-field">
+                    <div class="issue-field-label">Attached Images</div>
+                    <div class="attachment-thumbs" id="modal-attachments"></div>
+                </div>
+            </div>
+            <div class="issue-modal-footer">
+                <button type="button" class="issue-nav-btn" id="modal-prev">&larr; Previous</button>
+                <span class="issue-nav-position" id="modal-position"></span>
+                <button type="button" class="issue-nav-btn" id="modal-next">Next &rarr;</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="lightbox-overlay" id="lightbox-overlay">
+        <button type="button" class="lightbox-close" id="lightbox-close">&times;</button>
+        <button type="button" class="lightbox-nav-btn lightbox-prev" id="lightbox-prev">&larr;</button>
+        <img class="lightbox-image" id="lightbox-image" alt="">
+        <button type="button" class="lightbox-nav-btn lightbox-next" id="lightbox-next">&rarr;</button>
+        <div class="lightbox-filmstrip" id="lightbox-filmstrip"></div>
+    </div>
+
+    <script>
+        // All issues are embedded here (rather than fetched per click) so
+        // prev/next navigation in the modal is instant and needs no
+        // extra round trip to the server.
+        const ISSUES = {{ issues|tojson }};
+
+        const overlay = document.getElementById('issue-modal-overlay');
+        const fields = {
+            title: document.getElementById('modal-title'),
+            displayId: document.getElementById('modal-display-id'),
+            description: document.getElementById('modal-description'),
+            type: document.getElementById('modal-type'),
+            owner: document.getElementById('modal-owner'),
+            assignedTo: document.getElementById('modal-assigned-to'),
+            rootCause: document.getElementById('modal-root-cause'),
+            location: document.getElementById('modal-location'),
+            document: document.getElementById('modal-document'),
+            dueDate: document.getElementById('modal-due-date'),
+            position: document.getElementById('modal-position'),
+        };
+        const prevBtn = document.getElementById('modal-prev');
+        const nextBtn = document.getElementById('modal-next');
+        const attachmentsField = document.getElementById('modal-attachments-field');
+        const attachmentsContainer = document.getElementById('modal-attachments');
+
+        const lightboxOverlay = document.getElementById('lightbox-overlay');
+        const lightboxImage = document.getElementById('lightbox-image');
+        const lightboxPrevBtn = document.getElementById('lightbox-prev');
+        const lightboxNextBtn = document.getElementById('lightbox-next');
+        const lightboxFilmstrip = document.getElementById('lightbox-filmstrip');
+
+        let currentIndex = 0;
+        // Bumped on every renderIssue() call, so a slow-to-arrive fetch for
+        // an issue the user already navigated away from can't overwrite
+        // thumbnails for the one now showing.
+        let renderToken = 0;
+
+        // The full set of images for whichever issue's thumbnail was just
+        // clicked, plus which one the lightbox is currently showing — lets
+        // Previous/Next and the filmstrip page through them without
+        // re-fetching (the images were already loaded for the thumbnail row).
+        let lightboxImages = [];
+        let lightboxIndex = 0;
+
+        function renderLightboxImage() {
+            const image = lightboxImages[lightboxIndex];
+            lightboxImage.src = image.url;
+            lightboxImage.alt = image.name;
+
+            const hasMultiple = lightboxImages.length > 1;
+            lightboxPrevBtn.style.display = hasMultiple ? '' : 'none';
+            lightboxNextBtn.style.display = hasMultiple ? '' : 'none';
+            lightboxPrevBtn.disabled = lightboxIndex === 0;
+            lightboxNextBtn.disabled = lightboxIndex === lightboxImages.length - 1;
+
+            lightboxFilmstrip.querySelectorAll('.lightbox-thumb').forEach((thumb, i) => {
+                thumb.classList.toggle('active', i === lightboxIndex);
+            });
+        }
+
+        function openLightbox(images, index) {
+            lightboxImages = images;
+            lightboxIndex = index;
+
+            lightboxFilmstrip.innerHTML = '';
+            if (images.length > 1) {
+                images.forEach((image, i) => {
+                    const thumb = document.createElement('img');
+                    thumb.className = 'lightbox-thumb';
+                    thumb.src = image.url;
+                    thumb.alt = image.name;
+                    thumb.addEventListener('click', () => {
+                        lightboxIndex = i;
+                        renderLightboxImage();
+                    });
+                    lightboxFilmstrip.appendChild(thumb);
+                });
+            }
+            lightboxFilmstrip.style.display = images.length > 1 ? '' : 'none';
+
+            renderLightboxImage();
+            lightboxOverlay.classList.add('show');
+        }
+
+        function closeLightbox() {
+            lightboxOverlay.classList.remove('show');
+            lightboxImage.src = '';
+            lightboxImages = [];
+        }
+
+        function renderAttachments(images) {
+            attachmentsContainer.innerHTML = '';
+            images.forEach((image, index) => {
+                const thumb = document.createElement('img');
+                thumb.className = 'attachment-thumb';
+                thumb.src = image.url;
+                thumb.alt = image.name;
+                thumb.title = image.name;
+                thumb.addEventListener('click', () => openLightbox(images, index));
+                attachmentsContainer.appendChild(thumb);
+            });
+        }
+
+        function loadAttachments(issue, token) {
+            // Signed download URLs expire in ~2 minutes (see
+            // aps_forma_issues.storage.get_download_url), and most issues
+            // never get opened — fetching per-issue, on demand, avoids
+            // both problems instead of resolving every issue's images
+            // up front on page load.
+            if (!issue.attachment_count) {
+                attachmentsField.style.display = 'none';
+                return;
+            }
+            attachmentsField.style.display = '';
+            attachmentsContainer.innerHTML = '<span class="attachment-loading">Loading images…</span>';
+
+            fetch(`/api/issues/${issue.id}/attachments`)
+                .then((resp) => resp.json())
+                .then((data) => {
+                    if (token !== renderToken) return; // stale response, ignore
+                    renderAttachments(data.images || []);
+                })
+                .catch(() => {
+                    if (token !== renderToken) return;
+                    attachmentsContainer.innerHTML = '<span class="attachment-loading">Could not load images.</span>';
+                });
+        }
+
+        function renderIssue(index) {
+            const issue = ISSUES[index];
+            currentIndex = index;
+            renderToken += 1;
+
+            fields.title.textContent = issue.title;
+            fields.displayId.textContent = `#${issue.display_id} · ${issue.status}`;
+            fields.description.textContent = issue.description;
+            fields.type.textContent = `${issue.type} / ${issue.subtype}`;
+            fields.owner.textContent = issue.owner;
+            fields.assignedTo.textContent = issue.assigned_to;
+            fields.rootCause.textContent = issue.root_cause;
+            fields.location.textContent = issue.location;
+            fields.document.textContent = issue.document;
+            fields.dueDate.textContent = issue.due_date;
+            fields.position.textContent = `${index + 1} of ${ISSUES.length}`;
+
+            prevBtn.disabled = index === 0;
+            nextBtn.disabled = index === ISSUES.length - 1;
+
+            loadAttachments(issue, renderToken);
+        }
+
+        function openModal(index) {
+            renderIssue(index);
+            overlay.classList.add('show');
+        }
+
+        document.getElementById('issues-table-body')?.addEventListener('click', (event) => {
+            const row = event.target.closest('tr[data-index]');
+            if (row) openModal(parseInt(row.dataset.index, 10));
+        });
+
+        document.getElementById('modal-close').addEventListener('click', () => overlay.classList.remove('show'));
+        overlay.addEventListener('click', (event) => {
+            if (event.target === overlay) overlay.classList.remove('show');
+        });
+
+        prevBtn.addEventListener('click', () => {
+            if (currentIndex > 0) renderIssue(currentIndex - 1);
+        });
+        nextBtn.addEventListener('click', () => {
+            if (currentIndex < ISSUES.length - 1) renderIssue(currentIndex + 1);
+        });
+
+        document.getElementById('lightbox-close').addEventListener('click', closeLightbox);
+        lightboxOverlay.addEventListener('click', (event) => {
+            if (event.target === lightboxOverlay) closeLightbox();
+        });
+
+        lightboxPrevBtn.addEventListener('click', () => {
+            if (lightboxIndex > 0) {
+                lightboxIndex -= 1;
+                renderLightboxImage();
+            }
+        });
+        lightboxNextBtn.addEventListener('click', () => {
+            if (lightboxIndex < lightboxImages.length - 1) {
+                lightboxIndex += 1;
+                renderLightboxImage();
+            }
+        });
+
+        document.addEventListener('keydown', (event) => {
+            if (lightboxOverlay.classList.contains('show')) {
+                if (event.key === 'Escape') closeLightbox();
+                if (event.key === 'ArrowLeft' && !lightboxPrevBtn.disabled) lightboxPrevBtn.click();
+                if (event.key === 'ArrowRight' && !lightboxNextBtn.disabled) lightboxNextBtn.click();
+                return; // don't also page the issue modal underneath
+            }
+            if (!overlay.classList.contains('show')) return;
+            if (event.key === 'Escape') overlay.classList.remove('show');
+            if (event.key === 'ArrowLeft' && !prevBtn.disabled) renderIssue(currentIndex - 1);
+            if (event.key === 'ArrowRight' && !nextBtn.disabled) renderIssue(currentIndex + 1);
+        });
+    </script>
+</body>
+</html>

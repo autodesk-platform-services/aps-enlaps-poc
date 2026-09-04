@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forma Issues Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/variables.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/landing.css') }}">
+</head>
+<body class="landing-page">
+    <div class="landing-card">
+        <div class="landing-brand">
+            <svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+            </svg>
+            <span>Forma Issues Dashboard</span>
+        </div>
+
+        <h1 class="landing-title">Site Safety Issues</h1>
+        <p class="landing-subtitle">
+            Sign in with your Autodesk account to view Issues raised on this
+            construction project.
+        </p>
+
+        <button type="button" class="landing-cta" id="btn-open-login">Sign In with Autodesk</button>
+
+        <div class="landing-footnote">Uses your Autodesk Platform Services account</div>
+    </div>
+
+    <div class="login-dialog-overlay" id="login-dialog-overlay">
+        <div class="login-dialog">
+            <h2>Sign in with Autodesk</h2>
+            <p>
+                You'll be redirected to Autodesk's sign-in page. This app
+                requests read access to your profile and project Issues.
+            </p>
+            <div class="login-dialog-actions">
+                <button type="button" class="landing-cta btn-secondary" id="btn-cancel-login">Cancel</button>
+                <a href="{{ url_for('auth.login') }}" class="landing-cta">Continue</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const overlay = document.getElementById('login-dialog-overlay');
+        document.getElementById('btn-open-login').addEventListener('click', () => overlay.classList.add('show'));
+        document.getElementById('btn-cancel-login').addEventListener('click', () => overlay.classList.remove('show'));
+        overlay.addEventListener('click', (event) => {
+            if (event.target === overlay) overlay.classList.remove('show');
+        });
+    </script>
+</body>
+</html>

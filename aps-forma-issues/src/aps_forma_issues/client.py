@@ -60,6 +60,54 @@ class FormaIssuesClient:
             self._config, self._auth, issue, session=self._session
         )
 
+    def list_issues(self, limit: int = 100, offset: int = 0) -> dict:
+        """Lists Issues in the target project, newest page first.
+
+        Args:
+            limit (int, optional): Max results per page (API-capped at 200).
+            offset (int, optional): Pagination offset.
+
+        Returns:
+            dict: `{"pagination": {...}, "results": [...]}`.
+
+        Raises:
+            IssueFetchError: If the request fails.
+        """
+        return _issues.list_issues(
+            self._config, self._auth, limit=limit, offset=offset, session=self._session
+        )
+
+    def get_issue(self, issue_id: str) -> dict:
+        """Fetches a single Issue by ID.
+
+        Args:
+            issue_id (str): ID of the issue to fetch.
+
+        Returns:
+            dict: Parsed issue.
+
+        Raises:
+            IssueFetchError: If the request fails.
+        """
+        return _issues.get_issue(self._config, self._auth, issue_id, session=self._session)
+
+    def get_issue_types(self, include_subtypes: bool = True) -> dict:
+        """Lists Issue types configured on the target project.
+
+        Args:
+            include_subtypes (bool, optional): Whether to include each
+                type's subtypes inline. Defaults to `True`.
+
+        Returns:
+            dict: `{"pagination": {...}, "results": [...]}`.
+
+        Raises:
+            IssueFetchError: If the request fails.
+        """
+        return _issues.get_issue_types(
+            self._config, self._auth, include_subtypes=include_subtypes, session=self._session
+        )
+
     def upload_image(self, image_bytes: bytes, filename: str) -> str:
         """Uploads image bytes to project-scoped Data Management storage.
 
@@ -184,6 +232,46 @@ class FormaIssuesClient:
             raw_issue=raw_issue,
             raw_attachment=raw_attachment,
             web_view_url=web_view_url,
+        )
+
+    def list_issue_attachments(self, issue_id: str) -> list[dict]:
+        """Lists attachments on an Issue, created via the Issues-attachments
+        endpoint path (`attach_image_to_issue_via_endpoint`).
+
+        !!!Important!!!
+        Only attachments created via `attach_image_to_issue` show up here.
+        is a reliable predicate for whether this call is worth making.
+
+        Args:
+            issue_id (str): ID of the issue to list attachments for.
+
+        Returns:
+            list[dict]: Each with `attachmentId`, `displayName`,
+            `storageUrn`, etc.
+
+        Raises:
+            AttachmentError: If the request fails.
+        """
+        return _attachments.list_attachments(
+            self._config, self._auth, issue_id, session=self._session
+        )
+
+    def get_attachment_download_url(self, storage_urn: str) -> str:
+        """Gets a short-lived, directly-downloadable URL for an attachment.
+
+        Args:
+            storage_urn (str): An attachment's `storageUrn`, from
+                `list_issue_attachments`.
+
+        Returns:
+            str: A signed S3 URL — expires in about two minutes, so
+            fetch it right before use rather than caching it.
+
+        Raises:
+            StorageDownloadError: If the request fails.
+        """
+        return _storage.get_download_url(
+            self._config, self._auth, storage_urn, session=self._session
         )
 
     def attach_image_to_issue_via_endpoint(

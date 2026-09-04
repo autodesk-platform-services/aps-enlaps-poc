@@ -11,10 +11,11 @@ import requests
 
 from .auth import TokenProvider
 from .config import FormaIssuesConfig
-from .exceptions import StorageUploadError
+from .exceptions import StorageDownloadError, StorageUploadError
 
 STORAGE_PATH = "/data/v1/projects/{project_id}/storage"
 OSS_OBJECT_PATH = "/oss/v2/buckets/{bucket}/objects/{object_name}/signeds3upload"
+OSS_DOWNLOAD_PATH = "/oss/v2/buckets/{bucket}/objects/{object_name}/signeds3download"
 
 _STORAGE_URN_RE = re.compile(r"^urn:adsk\.objects:os\.object:([^/]+)/(.+)$")
 
@@ -80,6 +81,40 @@ def upload_image_file(
     """
     p = Path(path)
     return upload_image_bytes(config, auth, p.read_bytes(), filename=p.name, session=session)
+
+
+def get_download_url(
+    config: FormaIssuesConfig,
+    auth: TokenProvider,
+    storage_urn: str,
+    session: requests.Session | None = None,
+) -> str:
+    """Gets a short-lived, directly-downloadable URL for a stored object.
+
+    Args:
+        config (FormaIssuesConfig): Target project config.
+        auth (TokenProvider): Auth client used to sign requests.
+        storage_urn (str): A `urn:adsk.objects:os.object:...` URN, e.g.
+            an attachment's `storageUrn` from `attachments.list_attachments`.
+        session (requests.Session, optional): Session to reuse.
+
+    Returns:
+        str: A signed S3 URL. Confirmed live: expires in about two
+        minutes — fetch it right before use, don't cache it.
+
+    Raises:
+        StorageDownloadError: If the request fails.
+    """
+    session = session or requests.Session()
+    bucket, object_key = _parse_storage_urn(storage_urn)
+    url = config.base_url + OSS_DOWNLOAD_PATH.format(bucket=bucket, object_name=object_key)
+    headers = {"Authorization": f"Bearer {auth.get_token()}"}
+    resp = session.get(url, headers=headers, timeout=config.request_timeout_seconds)
+    if resp.status_code != 200:
+        raise StorageDownloadError(
+            f"Could not get signed download URL: {resp.status_code} {resp.text}"
+        )
+    return resp.json()["url"]
 
 
 def _create_project_storage(

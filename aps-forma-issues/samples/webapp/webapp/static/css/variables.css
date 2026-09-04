@@ -1,0 +1,31 @@
+/* =====================================================
+   Color tokens — Autodesk light theme (accent #0696d7,
+   white surfaces, #e5e5e5 borders).
+   ===================================================== */
+
+:root {
+    --nav-bg: #ffffff;
+    --border-color: #e5e5e5;
+    --item-hover: #f5f5f5;
+
+    --accent-color: #0696d7;
+    --accent-color-dark: #057ab0;
+
+    --bg-page: #ffffff;
+    --bg-canvas: #fafafa;
+    --bg-card: #ffffff;
+
+    --text-primary: #333333;
+    --text-secondary: #666666;
+    --text-muted: #999999;
+
+    --status-open: #d68910;
+    --status-closed: #2e7d32;
+    --status-in_review: #6f42c1;
+    --status-pending: #057ab0;
+    --status-draft: #999999;
+
+    --shadow-card: 0 2px 10px rgba(0, 0, 0, 0.05);
+    --shadow-card-hover: 0 4px 14px rgba(0, 0, 0, 0.08);
+    --radius: 4px;
+}

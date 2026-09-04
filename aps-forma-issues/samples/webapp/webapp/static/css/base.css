@@ -1,0 +1,21 @@
+/* =====================================================
+   Shared reset + typography — used by every page.
+   ===================================================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Artifakt Element', 'Segoe UI', Arial, sans-serif;
+    color: var(--text-primary);
+    background: var(--bg-page);
+}
+
+.brand-icon {
+    height: 1.3em;
+    width: 1.3em;
+    flex-shrink: 0;
+}

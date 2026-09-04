@@ -25,6 +25,7 @@ from .config import FormaIssuesConfig
 from .exceptions import AttachmentError
 
 ATTACHMENTS_PATH = "/construction/issues/v1/projects/{project_id}/attachments"
+ATTACHMENT_ITEMS_PATH = "/construction/issues/v1/projects/{project_id}/attachments/{issue_id}/items"
 
 
 def attach_image_to_issue(
@@ -78,3 +79,41 @@ def attach_image_to_issue(
     if resp.status_code not in (200, 201):
         raise AttachmentError(f"Attachment failed: {resp.status_code} {resp.text}")
     return resp.json()
+
+
+def list_attachments(
+    config: FormaIssuesConfig,
+    auth: TokenProvider,
+    issue_id: str,
+    session: requests.Session | None = None,
+) -> list[dict]:
+    """Lists attachments on an Issue, created via this module's attach path.
+
+    !!!Important!!!
+    Only attachments created via `attach_image_to_issue` show up here.
+    is a reliable predicate for whether this call is worth making.
+
+    Args:
+        config (FormaIssuesConfig): Target project config.
+        auth (TokenProvider): Auth client used to sign requests.
+        issue_id (str): ID of the issue to list attachments for.
+        session (requests.Session, optional): Session to reuse.
+
+    Returns:
+        list[dict]: Each with `attachmentId`, `displayName`, `fileName`,
+        `storageUrn`, `fileSize`, `fileType`, etc.
+
+    Raises:
+        AttachmentError: If the request fails.
+    """
+    session = session or requests.Session()
+    url = config.base_url + ATTACHMENT_ITEMS_PATH.format(
+        project_id=config.project_id, issue_id=issue_id
+    )
+    headers = {"Authorization": f"Bearer {auth.get_token()}"}
+    resp = session.get(url, headers=headers, timeout=config.request_timeout_seconds)
+    if resp.status_code != 200:
+        raise AttachmentError(
+            f"Listing attachments failed: {resp.status_code} {resp.text}"
+        )
+    return resp.json().get("attachments", [])

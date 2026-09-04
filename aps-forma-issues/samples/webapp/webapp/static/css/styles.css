@@ -1,0 +1,437 @@
+/* =====================================================
+   Forma Issues Dashboard — styles
+   ===================================================== */
+
+body {
+    padding-top: 60px;
+}
+
+/* =====================================================
+   Navbar
+   ===================================================== */
+
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background: var(--nav-bg);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    z-index: 1000;
+}
+
+.navbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--accent-color);
+}
+
+.navbar-user {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.navbar-user .user-name {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.navbar-user .auth-btn {
+    padding: 6px 14px;
+    border: 1px solid var(--accent-color);
+    border-radius: var(--radius);
+    color: var(--accent-color);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 13px;
+}
+
+.navbar-user .auth-btn:hover {
+    background-color: var(--accent-color);
+    color: #fff;
+}
+
+/* =====================================================
+   Dashboard
+   ===================================================== */
+
+.dashboard {
+    max-width: 1200px;
+    margin: 32px auto;
+    padding: 0 24px;
+}
+
+.dashboard-title {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.dashboard-subtitle {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: 20px;
+}
+
+.dashboard-error {
+    background: #fdecea;
+    border: 1px solid #f5c6cb;
+    color: #611a15;
+    border-radius: var(--radius);
+    padding: 12px 16px;
+    font-size: 13px;
+    margin-bottom: 20px;
+}
+
+.issues-table-wrapper {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-card);
+    overflow: hidden;
+}
+
+.issues-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.issues-table th {
+    text-align: left;
+    padding: 12px 16px;
+    background: var(--bg-canvas);
+    color: var(--text-secondary);
+    font-weight: 600;
+    border-bottom: 1px solid var(--border-color);
+    white-space: nowrap;
+}
+
+.issues-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-primary);
+}
+
+.issues-table tbody tr {
+    cursor: pointer;
+    transition: background 0.1s ease;
+}
+
+.issues-table tbody tr:hover {
+    background: var(--item-hover);
+}
+
+.issues-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.issue-id-cell {
+    color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
+}
+
+.status-pill {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #fff;
+    text-transform: capitalize;
+    background: var(--status-open);
+}
+
+.status-pill[data-status="closed"] { background: var(--status-closed); }
+.status-pill[data-status="in_review"] { background: var(--status-in_review); }
+.status-pill[data-status="pending"] { background: var(--status-pending); }
+.status-pill[data-status="draft"] { background: var(--status-draft); }
+
+.empty-state {
+    padding: 48px 16px;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 13px;
+}
+
+/* =====================================================
+   Issue detail modal
+   ===================================================== */
+
+.issue-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 4000;
+}
+
+.issue-modal-overlay.show {
+    display: flex;
+}
+
+.issue-modal {
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+    width: 560px;
+    max-width: 90vw;
+    max-height: 85vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.issue-modal-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 18px 20px;
+    border-bottom: 1px solid var(--border-color);
+    gap: 12px;
+}
+
+.issue-modal-header-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.issue-modal-header-id {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 2px;
+}
+
+.issue-modal-close {
+    background: none;
+    border: none;
+    font-size: 20px;
+    line-height: 1;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 2px 6px;
+}
+
+.issue-modal-close:hover {
+    color: var(--text-primary);
+}
+
+.issue-modal-body {
+    padding: 20px;
+    overflow-y: auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px 24px;
+}
+
+.issue-field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.issue-field.full-width {
+    grid-column: 1 / -1;
+}
+
+.issue-field-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--text-muted);
+}
+
+.issue-field-value {
+    font-size: 13px;
+    color: var(--text-primary);
+    line-height: 1.5;
+}
+
+.issue-modal-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 20px;
+    border-top: 1px solid var(--border-color);
+}
+
+.issue-nav-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: #fff;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    padding: 8px 14px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.issue-nav-btn:hover:not(:disabled) {
+    background: var(--item-hover);
+    border-color: var(--accent-color);
+}
+
+.issue-nav-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.issue-nav-position {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+/* =====================================================
+   Attachment thumbnails + zoom lightbox
+   ===================================================== */
+
+.attachment-thumbs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.attachment-thumb {
+    width: 84px;
+    height: 84px;
+    object-fit: cover;
+    border-radius: var(--radius);
+    border: 1px solid var(--border-color);
+    cursor: zoom-in;
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.attachment-thumb:hover {
+    transform: scale(1.04);
+    box-shadow: var(--shadow-card-hover);
+}
+
+.attachment-loading {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.lightbox-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 5000;
+}
+
+.lightbox-overlay.show {
+    display: flex;
+}
+
+.lightbox-image {
+    max-width: 85vw;
+    max-height: 76vh;
+    border-radius: var(--radius);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+.lightbox-close {
+    position: fixed;
+    top: 20px;
+    right: 28px;
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 32px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.lightbox-close:hover {
+    color: #ccc;
+}
+
+.lightbox-nav-btn {
+    position: fixed;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.12);
+    border: none;
+    color: #fff;
+    font-size: 24px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+.lightbox-nav-btn:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.28);
+}
+
+.lightbox-nav-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.lightbox-prev {
+    left: 24px;
+}
+
+.lightbox-next {
+    right: 24px;
+}
+
+.lightbox-filmstrip {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+    max-width: 90vw;
+    overflow-x: auto;
+    padding: 4px;
+}
+
+.lightbox-thumb {
+    width: 56px;
+    height: 56px;
+    flex-shrink: 0;
+    object-fit: cover;
+    border-radius: var(--radius);
+    border: 2px solid transparent;
+    opacity: 0.55;
+    cursor: pointer;
+    transition: opacity 0.15s ease, border-color 0.15s ease;
+}
+
+.lightbox-thumb:hover {
+    opacity: 0.85;
+}
+
+.lightbox-thumb.active {
+    opacity: 1;
+    border-color: var(--accent-color);
+}
