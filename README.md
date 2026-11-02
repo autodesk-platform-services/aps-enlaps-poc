@@ -1,3 +1,6 @@
+<!-- archived-notice -->
+> **This repository is archived.** Archived repositories are not maintained or supported.
+
 ## APS-ENLAPS_POC
 
 Collection of libraries that facilitates integration of the “Safety Feed” 
